@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla para crear un Security Group con acceso SSH (puerto 22) en AWS.
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: El ID de la VPC donde se creará el Security Group para SSH
+
+Resources:
+  MySshSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Grupo de seguridad para SSH"
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: "SSHSecurityGroup"
+
+Outputs:
+  SecurityGroupId:
+    Description: "El ID del Security Group creado para SSH"
+    Value: !Ref MySshSecurityGroup
