@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Plantilla para crear un grupo de seguridad y una instancia EC2 en AWS"
+
+Resources:
+  # Grupo de Seguridad
+  SecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Permitir tráfico SSH desde cualquier lugar"
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: 22
+          ToPort: 22
+          CidrIp: "0.0.0.0/0"
+      VpcId: !Ref "AWS::EC2::VPC::Default"  # Usa la VPC predeterminada
+
+  # Instancia EC2
+  EC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: "t2.small"
+      KeyName: "vockey"
+      ImageId: "ami-04505e74c0741db8d"  # Ubuntu Server 22.04 LTS (AMI oficial en us-east-1, actualizar si usas otra región)
+      SecurityGroupIds:
+        - !Ref SecurityGroup
+      Tags:
+        - Key: "Name"
+          Value: "MyUbuntuInstance"
+
+Outputs:
+  InstanceId:
+    Description: "ID de la instancia EC2 creada"
+    Value: !Ref EC2Instance
+
+  PublicIp:
+    Description: "IP pública de la instancia EC2"
+    Value: !GetAtt EC2Instance.PublicIp
